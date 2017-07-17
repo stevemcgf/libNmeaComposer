@@ -49,7 +49,7 @@ void NmeaComposer::composeNmea(std::string& nmea, std::vector<std::string>& fiel
 	}
 	int16_t checksum = calculateNmeaChecksum(nmea);
 
-	boost::format auxfmt("%02x");
+	boost::format auxfmt("%02X");
 	nmea.append(boost::str(auxfmt % checksum));
 }
 
@@ -68,9 +68,10 @@ void NmeaComposer::composeRMC(std::string& nmea, const std::string& talkerid,
 	/*------------ Field 00 ---------------*/
 	if (talkerid.length() == 2)
 	{
-		std::string nmeahead = "XXRMC";
-		nmeahead[0] = talkerid[0];
-		nmeahead[1] = talkerid[1];
+		std::string nmeahead;
+		nmeahead.reserve(8);
+		nmeahead.append(talkerid);
+		nmeahead.append("RMC");
 		fields.push_back(nmeahead);
 	} else {
 		// Error
@@ -182,6 +183,163 @@ void NmeaComposer::composeRMC(std::string& nmea, const std::string& talkerid,
 
 	/*------------ Field 12 ---------------*/
 	fields.push_back("A");
+
+	composeNmea(nmea, fields);
+
+	LOG_MESSAGE(debug) << nmea;
+}
+
+void NmeaComposer::composeXDR(std::string& nmea, const std::string& talkerid,
+			const NmeaComposerValid& validity, std::vector<TransducerMeasurement>& measurements)
+{
+	int idxVar = 0;
+	std::vector<std::string> fields;
+	nmea = "";
+	nmea.reserve(128);
+
+	/*------------ Field 00 ---------------*/
+	if (talkerid.length() == 2)
+	{
+		std::string nmeahead;
+		nmeahead.reserve(8);
+		nmeahead.append(talkerid);
+		nmeahead.append("XDR");
+		fields.push_back(nmeahead);
+	} else {
+		// Error
+	}
+
+	for (auto& tm : measurements)
+	{
+		/*------------ Field 01 ---------------*/
+		if (!validity[idxVar])
+		{
+			fields.emplace_back(&tm.transducerType, 1);
+		} else {
+			fields.push_back("");
+		}
+		++idxVar;
+
+		/*------------ Field 02 ---------------*/
+		if (!validity[idxVar])
+		{
+			boost::format auxfmt;
+			if (tm.unitsOfMeasurement == 'C')
+			{
+				auxfmt = boost::format("%+06.1f");
+			} else if (tm.unitsOfMeasurement == 'B') {
+				auxfmt = boost::format("%6.4f");
+			} else if (tm.unitsOfMeasurement == 'P') {
+				auxfmt = boost::format("%05.1f");
+			} else {
+				auxfmt = boost::format("%.1f");
+			}
+
+			fields.push_back(boost::str(auxfmt % tm.measurementData));
+		} else {
+			fields.push_back("");
+		}
+		++idxVar;
+
+		/*------------ Field 03 ---------------*/
+		if (!validity[idxVar])
+		{
+			fields.emplace_back(&tm.unitsOfMeasurement, 1);
+		} else {
+			fields.push_back("");
+		}
+		++idxVar;
+
+		/*------------ Field 04 ---------------*/
+		if (!validity[idxVar])
+		{
+			fields.push_back(tm.nameOfTransducer);
+		} else {
+			fields.push_back("");
+		}
+		++idxVar;
+	}
+
+	composeNmea(nmea, fields);
+
+	LOG_MESSAGE(debug) << nmea;
+}
+
+void NmeaComposer::composeMWV(std::string& nmea, const std::string& talkerid,
+			const NmeaComposerValid& validity, double& windAngle,
+			Nmea_AngleReference& reference, double& windSpeed, char& windSpeedUnits,
+			char& sensorStatus)
+{
+	int idxVar = 0;
+	std::vector<std::string> fields;
+	nmea = "";
+	nmea.reserve(128);
+
+	/*------------ Field 00 ---------------*/
+	if (talkerid.length() == 2)
+	{
+		std::string nmeahead;
+		nmeahead.reserve(8);
+		nmeahead.append(talkerid);
+		nmeahead.append("MWV");
+		fields.push_back(nmeahead);
+	} else {
+		// Error
+	}
+
+	/*------------ Field 01 ---------------*/
+	if (!validity[idxVar])
+	{
+		boost::format auxfmt("%05.1f");
+
+		fields.push_back(boost::str(auxfmt % windAngle));
+	} else {
+		fields.push_back("");
+	}
+	++idxVar;
+
+	/*------------ Field 02 ---------------*/
+	if (!validity[idxVar])
+	{
+		if (reference == Nmea_AngleReference_True)
+		{
+			fields.push_back("T");
+		} else {
+			fields.push_back("R");
+		}
+	} else {
+		fields.push_back("");
+	}
+	++idxVar;
+
+	/*------------ Field 03 ---------------*/
+	if (!validity[idxVar])
+	{
+		boost::format auxfmt("%05.1f");
+
+		fields.push_back(boost::str(auxfmt % windSpeed));
+	} else {
+		fields.push_back("");
+	}
+	++idxVar;
+
+	/*------------ Field 03 ---------------*/
+	if (!validity[idxVar])
+	{
+		fields.emplace_back(&windSpeedUnits, 1);
+	} else {
+		fields.push_back("");
+	}
+	++idxVar;
+
+	/*------------ Field 04 ---------------*/
+	if (!validity[idxVar])
+	{
+		fields.emplace_back(&sensorStatus, 1);
+	} else {
+		fields.push_back("");
+	}
+	++idxVar;
 
 	composeNmea(nmea, fields);
 

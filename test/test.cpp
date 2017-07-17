@@ -17,7 +17,57 @@ BOOST_AUTO_TEST_CASE( composeRMC ) {
 	boost::gregorian::date mdate(2016,4,20);
 	double magneticvar = -1.4;
 
-
 	BOOST_REQUIRE_NO_THROW(NmeaComposer::composeRMC(nmeaRMC, talkerid, validity, mtime, latitude, longitude, speedknots, coursetrue, mdate, magneticvar));
 
+}
+
+BOOST_AUTO_TEST_CASE( composeXDR ) {
+
+	std::string nmeaXDR;
+
+	std::string talkerid = "WI";
+	NmeaComposerValid validity = 0L;
+
+	std::vector<TransducerMeasurement> measurements;
+	TransducerMeasurement tm;
+
+	tm.transducerType = 'C';
+	tm.measurementData = 16.4;
+	tm.unitsOfMeasurement = 'C';
+	tm.nameOfTransducer = "TEMP";
+
+	measurements.push_back(tm);
+
+	tm.transducerType = 'P';
+	tm.measurementData = 1.0079;
+	tm.unitsOfMeasurement = 'B';
+	tm.nameOfTransducer = "PRESS";
+
+	measurements.push_back(tm);
+
+	tm.transducerType = 'H';
+	tm.measurementData = 98.9;
+	tm.unitsOfMeasurement = 'P';
+	tm.nameOfTransducer = "RH";
+
+	measurements.push_back(tm);
+
+	BOOST_REQUIRE_NO_THROW(NmeaComposer::composeXDR(nmeaXDR, talkerid, validity, measurements));
+
+}
+
+BOOST_AUTO_TEST_CASE( composerWMV ) {
+
+	std::string nmeaWMV;
+
+	std::string talkerid = "WI";
+	NmeaComposerValid validity = 0L;
+
+	double windAngle = 192.0;
+	Nmea_AngleReference reference = Nmea_AngleReference_Relative;
+	double windSpeed = 3.86;
+	char windSpeedUnits = 'N';
+	char sensorStatus = 'A';
+
+	BOOST_REQUIRE_NO_THROW(NmeaComposer::composeMWV(nmeaWMV, talkerid, validity, windAngle, reference, windSpeed, windSpeedUnits, sensorStatus));
 }
