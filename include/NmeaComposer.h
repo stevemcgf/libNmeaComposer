@@ -44,6 +44,7 @@ public:
 	 *
 	 * @param [out] nmea String with NMEA Sentence
 	 * @param [in] 	validity Each field validity
+	 * @param [in]  talkerid Talker Identifier (2 characters)
 	 * @param [in] 	mtime UTC time
 	 * @param [in] 	latitude Latitude
 	 * @param [in] 	longitude Longitude
@@ -54,9 +55,11 @@ public:
 	 *
 	 * @return Bitset each index represents the validity of each output parameter respectively.
 	 */
-	static void composeRMC(std::string& nmea, const NmeaComposerValid& validity,
-			const boost::posix_time::time_duration& mtime, const double& latitude,
-			const double& longitude, const double& speedknots, const double& coursetrue,
+	static void composeRMC(std::string& nmea, const std::string& talkerid,
+			const NmeaComposerValid& validity,
+			const boost::posix_time::time_duration& mtime,
+			const double& latitude, const double& longitude,
+			const double& speedknots, const double& coursetrue,
 			const boost::gregorian::date& mdate, const double& magneticvar);
 
 private:
@@ -66,6 +69,9 @@ private:
 	 * @brief Private constructor. Prevents creating of class instance.
 	 */
 	NmeaComposer();
+
+	static void composeNmea(std::string& nmea, std::vector<std::string>& fields);
+	static int16_t calculateNmeaChecksum(const std::string& nmeaStr);
 };
 
 #endif /* NMEACOMPOSER_H_ */
