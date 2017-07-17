@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE( composeXDR ) {
 
 }
 
-BOOST_AUTO_TEST_CASE( composerWMV ) {
+BOOST_AUTO_TEST_CASE( composeWMV ) {
 
 	std::string nmeaWMV;
 
@@ -70,4 +70,31 @@ BOOST_AUTO_TEST_CASE( composerWMV ) {
 	char sensorStatus = 'A';
 
 	BOOST_REQUIRE_NO_THROW(NmeaComposer::composeMWV(nmeaWMV, talkerid, validity, windAngle, reference, windSpeed, windSpeedUnits, sensorStatus));
+}
+
+BOOST_AUTO_TEST_CASE( composeMWD ) {
+
+	std::string nmeaMWD;
+
+	std::string talkerid = "WI";
+	NmeaComposerValid validity = 0L;
+
+	double trueWindDirection = 4.2;
+	double magneticWindDirection = 4.2;
+	double windSpeedKnots = 7.2;
+	double windSpeedMeters = 3.7;
+
+	BOOST_REQUIRE_NO_THROW(NmeaComposer::composeMWD(nmeaMWD, talkerid, validity, trueWindDirection, magneticWindDirection, windSpeedKnots,	windSpeedMeters));
+}
+
+BOOST_AUTO_TEST_CASE( composeHDT ) {
+
+	std::string nmeaHDT;
+
+	std::string talkerid = "HE";
+	NmeaComposerValid validity = 0L;
+
+	double headingDegreesTrue = 57.34;
+
+	BOOST_REQUIRE_NO_THROW(NmeaComposer::composeHDT(nmeaHDT, talkerid, validity, headingDegreesTrue));
 }

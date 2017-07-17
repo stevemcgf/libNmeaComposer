@@ -58,9 +58,9 @@ public:
 	static void composeRMC(std::string& nmea, const std::string& talkerid,
 			const NmeaComposerValid& validity,
 			const boost::posix_time::time_duration& mtime,
-			const double& latitude, const double& longitude,
-			const double& speedknots, const double& coursetrue,
-			const boost::gregorian::date& mdate, const double& magneticvar);
+			const double latitude, const double longitude,
+			const double speedknots, const double coursetrue,
+			const boost::gregorian::date& mdate, const double magneticvar);
 
 	/**
 	 * @brief XDR NMEA Message composer
@@ -86,7 +86,7 @@ public:
 	 */
 	static void composeXDR(std::string& nmea, const std::string& talkerid,
 			const NmeaComposerValid& validity,
-			std::vector<TransducerMeasurement>& measurements);
+			const std::vector<TransducerMeasurement>& measurements);
 
 	/**
 	 * @brief MWV NMEA Message composer
@@ -113,12 +113,66 @@ public:
 	 * @param [in]  windSpeedUnits Wind Speed Units
 	 * @param [in]  sensorStatus Sensor Status
 	 *
-	 * @return Bitset each index represents the validity of each output parameter respectively.
 	 */
 	static void composeMWV(std::string& nmea, const std::string& talkerid,
-			const NmeaComposerValid& validity, double& windAngle,
-			Nmea_AngleReference& reference, double& windSpeed, char& windSpeedUnits,
-			char& sensorStatus);
+			const NmeaComposerValid& validity, const double windAngle,
+			const Nmea_AngleReference reference, const double windSpeed,
+			const char windSpeedUnits, const char sensorStatus);
+
+	/**
+	 * @brief MWD NMEA Message composer
+	 *
+	 * <b>MWD NMEA message fields</b><br>
+	 * <i>Wind Direction & Speed</i>
+	 *
+	 * Field | Meaning
+	 * ------|---------
+	 * 0 | Message ID --MWD
+	 * 1 | Wind direction, 0° to 359º
+	 * 2 | True
+	 * 3 | Wind direction, 0° to 359º
+	 * 4 | Magnetic
+	 * 5 | Wind speed in Knots
+	 * 6 | Knots
+	 * 7 | Wind speed in Meters per second
+	 * 8 | meters/second
+	 * 9 | checksum
+	 *
+	 * @param [out] nmea String with NMEA Sentence
+	 * @param [in]  talkerid Talker Identifier (2 characters)
+	 * @param [in] 	validity Each field validity
+	 * @param [in]  trueWindDirection Wind Direction in Degrees relative to True North.
+	 * @param [in]  magneticWindDirection Wind Direction in Degrees relative to Magnetic North.
+	 * @param [in]  windSpeedKnots Wind Speed in Knots.
+	 * @param [in]  windSpeedMeters Wind Speed in Meters per second.
+	 *
+	 */
+	static void composeMWD(std::string& nmea, const std::string& talkerid,
+			const NmeaComposerValid& validity, const double trueWindDirection,
+			const double magneticWindDirection, const double windSpeedKnots,
+			const double windSpeedMeters);
+
+	/**
+	 * @brief HDT NMEA Message composer
+	 *
+	 * <b>HDT NMEA message fields</b><br>
+	 * <i>Heading - 1</i>
+	 *
+	 * Field | Meaning
+	 * ------|---------
+	 * 0 | Message ID $HCHDT
+	 * 1 | Heading Degrees, true
+	 * 2 | T = True
+	 * 3 | Checksum
+	 *
+	 * @param [out] nmea String with NMEA Sentence
+	 * @param [in]  talkerid Talker Identifier (2 characters)
+	 * @param [in] 	validity Each field validity
+	 * @param [in]  headingDegreesTrue Heading degrees relative to true north
+	 *
+	 */
+	static void composeHDT(std::string& nmea, const std::string& talkerid,
+			const NmeaComposerValid& validity, const double headingDegreesTrue);
 
 private:
 	class impl;
