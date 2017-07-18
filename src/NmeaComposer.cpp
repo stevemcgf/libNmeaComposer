@@ -428,3 +428,119 @@ void NmeaComposer::composeHDT(std::string& nmea, const std::string& talkerid,
 
 	LOG_MESSAGE(debug)<< nmea;
 }
+
+void NmeaComposer::composeVLW(std::string& nmea, const std::string& talkerid,
+		const NmeaComposerValid& validity, const double totalCumulativeDistance,
+		const double distanceSinceReset) {
+	int idxVar = 0;
+	std::vector<std::string> fields;
+	nmea = "";
+	nmea.reserve(128);
+
+	/*------------ Field 00 ---------------*/
+	if (talkerid.length() == 2) {
+		std::string nmeahead;
+		nmeahead.reserve(8);
+		nmeahead.append(talkerid);
+		nmeahead.append("VLW");
+		fields.push_back(nmeahead);
+	} else {
+		// Error
+	}
+
+	/*------------ Field 01,02 ---------------*/
+	if (!validity[idxVar]) {
+		boost::format auxfmt("%.2f");
+
+		fields.push_back(boost::str(auxfmt % totalCumulativeDistance));
+	} else {
+		fields.push_back("");
+	}
+	fields.push_back("N");
+	++idxVar;
+
+	/*------------ Field 03,04 ---------------*/
+	if (!validity[idxVar]) {
+		boost::format auxfmt("%.2f");
+
+		fields.push_back(boost::str(auxfmt % distanceSinceReset));
+	} else {
+		fields.push_back("");
+	}
+	fields.push_back("N");
+	++idxVar;
+
+	composeNmea(nmea, fields);
+
+	LOG_MESSAGE(debug)<< nmea;
+}
+
+void NmeaComposer::composeVHW(std::string& nmea, const std::string& talkerid,
+			const NmeaComposerValid& validity, const double headingTrue,
+			const double headingMagnetic, const double speedInKnots,
+			const double speedInKmH)
+{
+	int idxVar = 0;
+	std::vector<std::string> fields;
+	nmea = "";
+	nmea.reserve(128);
+
+	/*------------ Field 00 ---------------*/
+	if (talkerid.length() == 2) {
+		std::string nmeahead;
+		nmeahead.reserve(8);
+		nmeahead.append(talkerid);
+		nmeahead.append("VHW");
+		fields.push_back(nmeahead);
+	} else {
+		// Error
+	}
+
+	/*------------ Field 01,02 ---------------*/
+	if (!validity[idxVar]) {
+		boost::format auxfmt("%05.1f");
+
+		fields.push_back(boost::str(auxfmt % headingTrue));
+	} else {
+		fields.push_back("");
+	}
+	fields.push_back("T");
+	++idxVar;
+
+	/*------------ Field 03,04 ---------------*/
+	if (!validity[idxVar]) {
+		boost::format auxfmt("%05.1f");
+
+		fields.push_back(boost::str(auxfmt % headingMagnetic));
+	} else {
+		fields.push_back("");
+	}
+	fields.push_back("M");
+	++idxVar;
+
+	/*------------ Field 05,06 ---------------*/
+	if (!validity[idxVar]) {
+		boost::format auxfmt("%.1f");
+
+		fields.push_back(boost::str(auxfmt % speedInKnots));
+	} else {
+		fields.push_back("");
+	}
+	fields.push_back("N");
+	++idxVar;
+
+	/*------------ Field 07,08 ---------------*/
+	if (!validity[idxVar]) {
+		boost::format auxfmt("%.1f");
+
+		fields.push_back(boost::str(auxfmt % speedInKmH));
+	} else {
+		fields.push_back("");
+	}
+	fields.push_back("K");
+	++idxVar;
+
+	composeNmea(nmea, fields);
+
+	LOG_MESSAGE(debug)<< nmea;
+}

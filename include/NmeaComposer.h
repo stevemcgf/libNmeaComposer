@@ -174,6 +174,65 @@ public:
 	static void composeHDT(std::string& nmea, const std::string& talkerid,
 			const NmeaComposerValid& validity, const double headingDegreesTrue);
 
+	/**
+	 * @brief VLW NMEA Message composer
+	 *
+	 * <b>VLW NMEA message fields</b><br>
+	 * <i>Distance Traveled through Water</i>
+	 *
+	 * Field | Meaning
+	 * ------|---------
+	 * 0 | Message ID $VDVLW
+	 * 1 | Total cumulative distance
+	 * 2 | N = Nautical Miles
+	 * 3 | Distance since Reset
+	 * 4 | N = Nautical Miles
+	 * 5 | Checksum
+	 *
+	 * @param [out] nmea String with NMEA Sentence
+	 * @param [in]  talkerid Talker Identifier (2 characters)
+	 * @param [in] 	validity Each field validity
+	 * @param [in]  totalCumulativeDistance Total cumulative distance in Nautical Miles
+	 * @param [in]  distanceSinceReset Distance since reset in Nautical Miles
+	 *
+	 */
+	static void composeVLW(std::string& nmea, const std::string& talkerid,
+			const NmeaComposerValid& validity,
+			const double totalCumulativeDistance,
+			const double distanceSinceReset);
+
+	/**
+	 * @brief VHW NMEA Message composer
+	 *
+	 * <b>VHW NMEA message fields</b><br>
+	 * <i>Water speed and heading</i>
+	 *
+	 * Field | Meaning
+	 * ------|---------
+	 * 0 | Message ID $VDVHW
+	 * 1 | Degress True
+	 * 2 | T = True
+	 * 3 | Degrees Magnetic
+	 * 4 | M = Magnetic
+	 * 5 | Knots (speed of vessel relative to the water)
+	 * 6 | N = Knots
+	 * 7 | Kilometers (speed of vessel relative to the water)
+	 * 8 | K = Kilometres
+	 * 9 | Checksum
+	 *
+	 * @param [out] nmea String with NMEA Sentence
+	 * @param [in]  talkerid Talker Identifier (2 characters)
+	 * @param [in] 	validity Each field validity
+	 * @param [in]  headingTrue Heading degrees true
+	 * @param [in]  headingMagnetic Heading magnetic true
+	 * @param [in]  speedInKnots Speed in Knots
+	 * @param [in]  speedInKmH Speed in Km/h
+	 *
+	 */
+	static void composeVHW(std::string& nmea, const std::string& talkerid,
+			const NmeaComposerValid& validity, const double headingTrue,
+			const double headingMagnetic, const double speedInKnots,
+			const double speedInKmH);
 private:
 	class impl;
 

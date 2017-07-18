@@ -98,3 +98,16 @@ BOOST_AUTO_TEST_CASE( composeHDT ) {
 
 	BOOST_REQUIRE_NO_THROW(NmeaComposer::composeHDT(nmeaHDT, talkerid, validity, headingDegreesTrue));
 }
+
+BOOST_AUTO_TEST_CASE( composeVLW ) {
+
+	std::string nmeaVLW;
+
+	std::string talkerid = "VD";
+	NmeaComposerValid validity = 0L;
+
+	double totalCumulativeDistance = 20.70;
+	double distanceSinceReset = 1.20;
+
+	BOOST_REQUIRE_NO_THROW(NmeaComposer::composeVLW(nmeaVLW, talkerid, validity, totalCumulativeDistance, distanceSinceReset));
+}
