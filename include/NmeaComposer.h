@@ -233,6 +233,33 @@ public:
 			const NmeaComposerValid& validity, const double headingTrue,
 			const double headingMagnetic, const double speedInKnots,
 			const double speedInKmH);
+
+	/**
+	 * @brief PRDID NMEA Message composer
+	 *
+	 * <b>PRDID NMEA message fields</b><br>
+	 * <i>Proprietary Heading, Pitch, Roll</i>
+	 *
+	 * Field | Meaning
+	 * ------|---------
+	 * 0 | Message ID PRDID
+	 * 1 | Pitch
+	 * 2 | Roll
+	 * 3 | Heading
+	 * 4 | Checksum
+	 *
+	 * @param [out] nmea String with NMEA Sentence
+	 * @param [in]  talkerid Talker Identifier (2 characters)
+	 * @param [in] 	validity Each field validity
+	 * @param [in]  pitch Is the up/down rotation of a vessel about its lateral/Y (side-to-side or port-starboard) axis.
+	 * @param [in]  roll Is the tilting rotation of a vessel about its longitudinal/X (front-back or bow-stern) axis.
+	 * @param [in]  heading Is the north direction of a vessel.
+	 *
+	 */
+	static void composePRDID(std::string& nmea,
+			const NmeaComposerValid& validity, const double pitch,
+			const double roll, const double heading);
+
 private:
 	class impl;
 

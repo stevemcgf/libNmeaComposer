@@ -111,3 +111,15 @@ BOOST_AUTO_TEST_CASE( composeVLW ) {
 
 	BOOST_REQUIRE_NO_THROW(NmeaComposer::composeVLW(nmeaVLW, talkerid, validity, totalCumulativeDistance, distanceSinceReset));
 }
+
+BOOST_AUTO_TEST_CASE( composePRDID )
+{
+	std::string nmeaPRDID;
+
+	NmeaComposerValid validity = 0L;
+	double pitch = -10;
+	double roll = 37.5;
+	double heading = 100;
+
+	BOOST_REQUIRE_NO_THROW(NmeaComposer::composePRDID(nmeaPRDID, validity, pitch, roll, heading));
+}

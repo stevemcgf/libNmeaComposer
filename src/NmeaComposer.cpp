@@ -476,10 +476,9 @@ void NmeaComposer::composeVLW(std::string& nmea, const std::string& talkerid,
 }
 
 void NmeaComposer::composeVHW(std::string& nmea, const std::string& talkerid,
-			const NmeaComposerValid& validity, const double headingTrue,
-			const double headingMagnetic, const double speedInKnots,
-			const double speedInKmH)
-{
+		const NmeaComposerValid& validity, const double headingTrue,
+		const double headingMagnetic, const double speedInKnots,
+		const double speedInKmH) {
 	int idxVar = 0;
 	std::vector<std::string> fields;
 	nmea = "";
@@ -538,6 +537,56 @@ void NmeaComposer::composeVHW(std::string& nmea, const std::string& talkerid,
 		fields.push_back("");
 	}
 	fields.push_back("K");
+	++idxVar;
+
+	composeNmea(nmea, fields);
+
+	LOG_MESSAGE(debug)<< nmea;
+}
+
+void NmeaComposer::composePRDID(std::string& nmea,
+		const NmeaComposerValid& validity, const double pitch,
+		const double roll, const double heading) {
+
+	int idxVar = 0;
+	std::vector<std::string> fields;
+	nmea = "";
+	nmea.reserve(128);
+
+	/*------------ Field 00 ---------------*/
+	std::string nmeahead;
+	nmeahead.reserve(8);
+	nmeahead.append("PRDID");
+	fields.push_back(nmeahead);
+
+	/*------------ Field 01 ---------------*/
+	if (!validity[idxVar]) {
+		boost::format auxfmt("%+06.2f");
+
+		fields.push_back(boost::str(auxfmt % pitch));
+	} else {
+		fields.push_back("");
+	}
+	++idxVar;
+
+	/*------------ Field 02 ---------------*/
+	if (!validity[idxVar]) {
+		boost::format auxfmt("%+06.2f");
+
+		fields.push_back(boost::str(auxfmt % roll));
+	} else {
+		fields.push_back("");
+	}
+	++idxVar;
+
+	/*------------ Field 03 ---------------*/
+	if (!validity[idxVar]) {
+		boost::format auxfmt("%06.2f");
+
+		fields.push_back(boost::str(auxfmt % heading));
+	} else {
+		fields.push_back("");
+	}
 	++idxVar;
 
 	composeNmea(nmea, fields);
